@@ -132,3 +132,4 @@ data/
 logs/
 results/
 run_eval.sh
+outputs/
