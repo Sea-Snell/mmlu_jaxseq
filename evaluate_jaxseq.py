@@ -10,14 +10,25 @@ import requests
 from requests.exceptions import Timeout, ConnectionError
 import tyro
 
-def get_loglikelihood(host, n_retries, inputs):
+def get_loglikelihood(
+    host, 
+    n_retries, 
+    inputs, 
+    max_input_length, 
+    max_output_length, 
+):
     prefix, text = zip(*inputs)
     prefix = list(prefix)
     text = list(text)
     for _ in range(n_retries):
         response = requests.post(
             urllib.parse.urljoin(host, 'log_probs'), 
-            json={'prefix_text': prefix, 'text': text}, 
+            json={
+                'in_strs': prefix, 
+                'out_strs': text, 
+                'max_input_length': max_input_length, 
+                'max_output_length': max_output_length, 
+            }, 
         ).json()
         if response['status'] == 'success':
             return response['data']
@@ -57,7 +68,18 @@ def gen_prompt(train_df, subject, k=-1):
     return prompt
 
 
-def eval(host, n_retries, k_shot, subject, dev_df, test_df, prompt_prefix='', prompt_suffix=''):
+def eval(
+    host, 
+    n_retries, 
+    k_shot, 
+    subject, 
+    dev_df, 
+    test_df, 
+    prompt_prefix='', 
+    prompt_suffix='', 
+    max_input_length=1024, 
+    max_output_length=1024, 
+):
     cors = []
     all_probs = []
     answers = choices[: test_df.shape[1] - 2]
@@ -73,7 +95,13 @@ def eval(host, n_retries, k_shot, subject, dev_df, test_df, prompt_prefix='', pr
         label = test_df.iloc[i, test_df.shape[1] - 1]
 
         inputs = [(prompt, 'A'), (prompt, 'B'), (prompt, 'C'), (prompt, 'D')]
-        probs = get_loglikelihood(host, n_retries, inputs)
+        probs = get_loglikelihood(
+            host, 
+            n_retries, 
+            inputs, 
+            max_input_length, 
+            max_output_length, 
+        )
 
         pred = {0: "A", 1: "B", 2: "C", 3: "D"}[np.argmax(probs)]
 
@@ -99,6 +127,8 @@ def main(
     n_retries: int=3, 
     prompt_prefix: str='', 
     prompt_suffix: str='', 
+    max_input_length: int=1024, 
+    max_output_length: int=1024, 
 ):
 
     subjects = sorted(
@@ -138,6 +168,8 @@ def main(
             test_df, 
             prompt_prefix=prompt_prefix, 
             prompt_suffix=prompt_suffix, 
+            max_input_length=max_input_length, 
+            max_output_length=max_output_length, 
         )
         subcats = subcategories[subject]
         for subcat in subcats:
