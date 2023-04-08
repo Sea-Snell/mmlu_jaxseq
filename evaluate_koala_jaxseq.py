@@ -111,7 +111,7 @@ def eval(
         k = k_shot
         prompt_end = format_example(test_df, i, include_answer=False)
         train_prompt = gen_prompt(dev_df, subject, k)
-        # prompt = train_prompt + prompt_end.removesuffix("Answer:")
+        prompt = train_prompt + prompt_end.removesuffix("Answer:") # NOTE: we remove "Answer:" from prompt_end, and place it after the " GPT:" tag instead
         prompt = train_prompt + prompt_end
         prompt = prompt_prefix + prompt + prompt_suffix
 
