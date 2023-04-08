@@ -62,6 +62,7 @@ class LMEvalHarnessInterface(LM):
                 ).json()
                 if response['status'] == 'success':
                     did_succeed = True
+                    break
             if not did_succeed:
                 raise Exception('Failed to get logprobs after {} retries'.format(self.n_retries))
 
