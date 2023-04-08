@@ -14,7 +14,7 @@
 #     --host http://127.0.0.1:8004/ \
 #     --k-shot 5 \
 #     --input-process koala \
-#     --bsize 8
+#     --bsize 4
 # echo "koala"
 
 # echo "llama"
@@ -22,7 +22,7 @@
 #     --host http://127.0.0.1:8005/ \
 #     --k-shot 5 \
 #     --input-process identity \
-#     --bsize 8
+#     --bsize 4
 # echo "llama"
 
 # old
