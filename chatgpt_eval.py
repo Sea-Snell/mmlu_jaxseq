@@ -14,19 +14,31 @@ from typing import List
 
 choices = ["A", "B", "C", "D"]
 
+def parse_response(response: str) -> str:
+    return response.strip().upper()[0]
+
 def get_answer(prompt: str) -> str:
-    response_obj = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo", 
-        messages=[
-            {"role": "system", "content": "You are a helpful assistant."}, 
-            {"role": "user", "content": prompt}, 
-        ], 
-        temperature=0.0, 
-    )
-    response = response_obj["choices"][0]['message']['content'].strip().upper()
-    if response not in choices:
-        print("Invalid response: {}".format(response))
-    return response
+    while True:
+        try:
+            response_obj = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo", 
+                messages=[
+                    {"role": "system", "content": "You are a helpful assistant."}, 
+                    {"role": "user", "content": prompt}, 
+                ], 
+                temperature=0.0, 
+            )
+            break
+        except Exception as e:
+            print('waiting ...')
+            time.sleep(1)
+            print('retrying ...')
+            continue
+    raw_response = response_obj["choices"][0]['message']['content']
+    answer = parse_response(raw_response)
+    if answer not in choices:
+        print("Invalid response: {}".format(raw_response))
+    return answer
 
 def format_subject(subject):
     l = subject.split("_")
@@ -48,7 +60,7 @@ def format_example(df, idx, include_answer=True):
 
 
 def gen_prompt(train_df, subject, k=-1):
-    prompt = "The following are multiple choice questions (with answers) about {}.\n\n".format(
+    prompt = "The following are multiple choice questions (with answers) about {}. Select the correct answer by responding with one of the four possible answer options (A, B, C, or D). \n\n".format(
         format_subject(subject)
     )
     if k == -1:
