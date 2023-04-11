@@ -9,35 +9,24 @@ from tqdm.auto import tqdm
 import requests
 from requests.exceptions import Timeout, ConnectionError
 import tyro
-from collections import defaultdict
-
-def get_loglikelihood(
-    host, 
-    n_retries, 
-    inputs, 
-    max_input_length, 
-    max_output_length, 
-):
-    prefix, text = zip(*inputs)
-    prefix = list(prefix)
-    text = list(text)
-    for _ in range(n_retries):
-        response = requests.post(
-            urllib.parse.urljoin(host, 'log_probs'), 
-            json={
-                'in_strs': prefix, 
-                'out_strs': text, 
-                'max_input_length': max_input_length, 
-                'max_output_length': max_output_length, 
-            }, 
-        ).json()
-        if response['status'] == 'success':
-            return response['data']
-    raise Exception('Failed to get logprobs after {} retries'.format(n_retries))
-
+import openai
+from typing import List
 
 choices = ["A", "B", "C", "D"]
 
+def get_answer(prompt: str) -> str:
+    response_obj = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo", 
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant."}, 
+            {"role": "user", "content": prompt}, 
+        ], 
+        temperature=0.0, 
+    )
+    response = response_obj["choices"][0]['message']['content'].strip().upper()
+    if response not in choices:
+        print("Invalid response: {}".format(response))
+    return response
 
 def format_subject(subject):
     l = subject.split("_")
@@ -47,35 +36,14 @@ def format_subject(subject):
     return s
 
 
-# def format_example(df, idx, include_answer=True):
-#     prompt = df.iloc[idx, 0]
-#     k = df.shape[1] - 2
-#     for j in range(k):
-#         prompt += " USER: {}. {}".format(choices[j], df.iloc[idx, j + 1])
-#     prompt += "\nAnswer: GPT:"
-#     if include_answer:
-#         prompt += " {} </s>".format(df.iloc[idx, k + 1])
-#     return prompt
-
-
-# def gen_prompt(train_df, subject, k=-1):
-#     prompt = "BEGINNING OF CONVERSATION: USER: I will give you a series of multiple choice questions about {}. Select the correct answer by responding with one of the four possible answer options (A, B, C, or D). GPT: Ok got. I'm ready! </s>".format(
-#         format_subject(subject)
-#     )
-#     if k == -1:
-#         k = train_df.shape[0]
-#     for i in range(k):
-#         prompt += format_example(train_df, i)
-#     return prompt
-
 def format_example(df, idx, include_answer=True):
-    prompt = f"Question: {df.iloc[idx, 0]}\n\nChoices:"
+    prompt = df.iloc[idx, 0]
     k = df.shape[1] - 2
     for j in range(k):
-        prompt += "\n({}) {}".format(choices[j], df.iloc[idx, j + 1])
-    prompt += "\n\nAnswer:"
+        prompt += "\n{}. {}".format(choices[j], df.iloc[idx, j + 1])
+    prompt += "\nAnswer:"
     if include_answer:
-        prompt += " ({})\n\n".format(df.iloc[idx, k + 1])
+        prompt += " {}\n\n".format(df.iloc[idx, k + 1])
     return prompt
 
 
@@ -89,71 +57,49 @@ def gen_prompt(train_df, subject, k=-1):
         prompt += format_example(train_df, i)
     return prompt
 
+
 def eval(
-    host, 
-    n_retries, 
     k_shot, 
     subject, 
     dev_df, 
     test_df, 
     prompt_prefix='', 
     prompt_suffix='', 
-    max_input_length=1024, 
-    max_output_length=1024, 
 ):
     cors = []
-    all_probs = []
-    answers = choices[: test_df.shape[1] - 2]
-    answer_distribution = defaultdict(int)
+    all_preds = []
 
     for i in tqdm(range(test_df.shape[0])):
         # get prompt and make sure it fits
         k = k_shot
         prompt_end = format_example(test_df, i, include_answer=False)
         train_prompt = gen_prompt(dev_df, subject, k)
-        prompt = train_prompt + prompt_end.removesuffix("Answer:") # NOTE: we remove "Answer:" from prompt_end, and place it after the " GPT:" tag instead
+        prompt = train_prompt + prompt_end
         prompt = prompt_prefix + prompt + prompt_suffix
 
         label = test_df.iloc[i, test_df.shape[1] - 1]
 
-        inputs = [(prompt, '(A)'), (prompt, '(B)'), (prompt, '(C)'), (prompt, '(D)')]
-        probs = get_loglikelihood(
-            host, 
-            n_retries, 
-            inputs, 
-            max_input_length, 
-            max_output_length, 
-        )
-
-        pred = {0: "A", 1: "B", 2: "C", 3: "D"}[np.argmax(probs)]
-        answer_distribution[pred] += 1
-
+        pred = get_answer(prompt)
 
         cor = pred == label
         cors.append(cor)
-        all_probs.append(probs)
+        all_preds.append(all_preds)
 
     acc = np.mean(cors)
     cors = np.array(cors)
 
-    all_probs = np.array(all_probs)
     print("Average accuracy {:.3f} - {}".format(acc, subject))
-    print("Answer distribution: {}".format(answer_distribution))
 
-    return cors, acc, all_probs
+    return cors, acc, all_preds
 
 
 def main(
     name: str, 
-    host: str, 
     k_shot: int, 
     data_dir: str, 
     save_dir: str, 
-    n_retries: int=3, 
     prompt_prefix: str='', 
     prompt_suffix: str='', 
-    max_input_length: int=1024, 
-    max_output_length: int=1024, 
 ):
 
     subjects = sorted(
@@ -184,17 +130,13 @@ def main(
             os.path.join(data_dir, "test", subject + "_test.csv"), header=None
         )
 
-        cors, acc, probs = eval(
-            host, 
-            n_retries, 
+        cors, acc, preds = eval(
             k_shot, 
             subject, 
             dev_df, 
             test_df, 
             prompt_prefix=prompt_prefix, 
             prompt_suffix=prompt_suffix, 
-            max_input_length=max_input_length, 
-            max_output_length=max_output_length, 
         )
         subcats = subcategories[subject]
         for subcat in subcats:
@@ -205,9 +147,7 @@ def main(
         all_cors.append(cors)
 
         test_df["{}_correct".format(name)] = cors
-        for j in range(probs.shape[1]):
-            choice = choices[j]
-            test_df["{}_choice{}_probs".format(name, choice)] = probs[:, j]
+        test_df["{}_predictions".format(name)] = preds
         test_df.to_csv(
             os.path.join(
                 save_dir, "results_{}".format(name), "{}.csv".format(subject)

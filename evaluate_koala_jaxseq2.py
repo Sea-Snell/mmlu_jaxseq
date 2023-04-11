@@ -9,7 +9,6 @@ from tqdm.auto import tqdm
 import requests
 from requests.exceptions import Timeout, ConnectionError
 import tyro
-from collections import defaultdict
 
 def get_loglikelihood(
     host, 
@@ -47,35 +46,14 @@ def format_subject(subject):
     return s
 
 
-# def format_example(df, idx, include_answer=True):
-#     prompt = df.iloc[idx, 0]
-#     k = df.shape[1] - 2
-#     for j in range(k):
-#         prompt += " USER: {}. {}".format(choices[j], df.iloc[idx, j + 1])
-#     prompt += "\nAnswer: GPT:"
-#     if include_answer:
-#         prompt += " {} </s>".format(df.iloc[idx, k + 1])
-#     return prompt
-
-
-# def gen_prompt(train_df, subject, k=-1):
-#     prompt = "BEGINNING OF CONVERSATION: USER: I will give you a series of multiple choice questions about {}. Select the correct answer by responding with one of the four possible answer options (A, B, C, or D). GPT: Ok got. I'm ready! </s>".format(
-#         format_subject(subject)
-#     )
-#     if k == -1:
-#         k = train_df.shape[0]
-#     for i in range(k):
-#         prompt += format_example(train_df, i)
-#     return prompt
-
 def format_example(df, idx, include_answer=True):
-    prompt = f"Question: {df.iloc[idx, 0]}\n\nChoices:"
+    prompt = df.iloc[idx, 0]
     k = df.shape[1] - 2
     for j in range(k):
-        prompt += "\n({}) {}".format(choices[j], df.iloc[idx, j + 1])
-    prompt += "\n\nAnswer:"
+        prompt += "\n{}. {}".format(choices[j], df.iloc[idx, j + 1])
+    prompt += "\nAnswer:"
     if include_answer:
-        prompt += " ({})\n\n".format(df.iloc[idx, k + 1])
+        prompt += " {}\n\n".format(df.iloc[idx, k + 1])
     return prompt
 
 
@@ -88,6 +66,7 @@ def gen_prompt(train_df, subject, k=-1):
     for i in range(k):
         prompt += format_example(train_df, i)
     return prompt
+
 
 def eval(
     host, 
@@ -104,7 +83,6 @@ def eval(
     cors = []
     all_probs = []
     answers = choices[: test_df.shape[1] - 2]
-    answer_distribution = defaultdict(int)
 
     for i in tqdm(range(test_df.shape[0])):
         # get prompt and make sure it fits
@@ -116,7 +94,7 @@ def eval(
 
         label = test_df.iloc[i, test_df.shape[1] - 1]
 
-        inputs = [(prompt, '(A)'), (prompt, '(B)'), (prompt, '(C)'), (prompt, '(D)')]
+        inputs = [(prompt, 'A'), (prompt, 'B'), (prompt, 'C'), (prompt, 'D')]
         probs = get_loglikelihood(
             host, 
             n_retries, 
@@ -126,8 +104,6 @@ def eval(
         )
 
         pred = {0: "A", 1: "B", 2: "C", 3: "D"}[np.argmax(probs)]
-        answer_distribution[pred] += 1
-
 
         cor = pred == label
         cors.append(cor)
@@ -138,7 +114,6 @@ def eval(
 
     all_probs = np.array(all_probs)
     print("Average accuracy {:.3f} - {}".format(acc, subject))
-    print("Answer distribution: {}".format(answer_distribution))
 
     return cors, acc, all_probs
 
