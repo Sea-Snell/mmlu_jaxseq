@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# 4/11/2023
+
+# left pane
+# python evaluate_koala_jaxseq2.py --name koala_distill_13B_matches_default_answer_in_prompt --host http://127.0.0.1:8004/ --k-shot 5 --data-dir /home/csnell/mmlu_easylm/data/ --save-dir /home/csnell/mmlu_easylm/outputs/ --prompt-prefix "BEGINNING OF CONVERSATION: USER: " --prompt-suffix " GPT: Answer:"
+
+# right pane
+# python evaluate_koala_jaxseq.py --name koala_distill_13B_answer_in_gpt_prompt2 --host http://127.0.0.1:8005/ --k-shot 5 --data-dir /home/csnell/mmlu_easylm/data/ --save-dir /home/csnell/mmlu_easylm/outputs/ --prompt-prefix "BEGINNING OF CONVERSATION: USER: " --prompt-suffix " GPT: Answer:"
+
 # 4/10/2023
 
 # top left pane
@@ -9,7 +17,7 @@
 # python evaluate_koala_jaxseq.py --name koala_distill_13B_answer_in_gpt_prompt2 --host http://127.0.0.1:8005/ --k-shot 5 --data-dir /home/csnell/mmlu_easylm/data/ --save-dir /home/csnell/mmlu_easylm/outputs/ --prompt-prefix "BEGINNING OF CONVERSATION: USER: " --prompt-suffix " GPT: Answer:"
 
 # top right pane
-python chatgpt_eval.py --name chatgpt_eval --k-shot 5 --data-dir /home/csnell/mmlu_easylm/data/ --save-dir /home/csnell/mmlu_easylm/outputs/
+# python chatgpt_eval.py --name chatgpt_eval --k-shot 5 --data-dir /home/csnell/mmlu_easylm/data/ --save-dir /home/csnell/mmlu_easylm/outputs/
 
 # 4/7/2023
 
