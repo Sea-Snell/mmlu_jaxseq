@@ -25,7 +25,7 @@
 # echo "koala 10k"
 # python evaluate_eval_harness_jaxseq.py \
 #     --host http://127.0.0.1:8006/ \
-#     --k-shot 0 \
+#     --k-shot 5 \
 #     --input-process koala \
 #     --bsize 4 
 # echo "koala 10k"
@@ -34,7 +34,7 @@
 # echo "koala 50k"
 # python evaluate_eval_harness_jaxseq.py \
 #     --host http://127.0.0.1:8007/ \
-#     --k-shot 0 \
+#     --k-shot 5 \
 #     --input-process koala \
 #     --bsize 4 
 # echo "koala 50k"
@@ -43,7 +43,7 @@
 # echo "koala 100k"
 # python evaluate_eval_harness_jaxseq.py \
 #     --host http://127.0.0.1:8008/ \
-#     --k-shot 0 \
+#     --k-shot 5 \
 #     --input-process koala \
 #     --bsize 4 
 # echo "koala 100k"

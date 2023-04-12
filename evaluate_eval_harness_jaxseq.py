@@ -1,14 +1,11 @@
 import pprint
 import urllib
-import time
 import requests
 import tyro
-from flax.traverse_util import flatten_dict
 from lm_eval import evaluator, tasks
 from lm_eval.base import LM
 from lm_eval.tasks.hendrycks_test import SUBJECTS
 from typing import List, Callable
-import json
 from tqdm.auto import tqdm
 
 def identity_fn(x: str) -> str:
