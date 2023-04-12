@@ -30,7 +30,7 @@
 #     --bsize 4 
 # echo "koala 10k"
 
-# nlp3 top right pane
+# nlp3 bottom left pane
 # echo "koala 50k"
 # python evaluate_eval_harness_jaxseq.py \
 #     --host http://127.0.0.1:8007/ \
@@ -39,7 +39,7 @@
 #     --bsize 4 
 # echo "koala 50k"
 
-# nlp3 botom left pane
+# nlp3 top right pane
 # echo "koala 100k"
 # python evaluate_eval_harness_jaxseq.py \
 #     --host http://127.0.0.1:8008/ \
