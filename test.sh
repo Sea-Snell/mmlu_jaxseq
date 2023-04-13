@@ -1,4 +1,11 @@
 #!/bin/bash
+# 4/13/2023
+
+# chargpt 0 shot
+
+# nlp4 right pane
+python chatgpt_eval.py --name chatgpt_eval_zero_shot --k-shot 0 --data-dir /home/csnell/mmlu_easylm/data/ --save-dir /home/csnell/mmlu_easylm/outputs/
+
 
 # 4/12/2023
 
