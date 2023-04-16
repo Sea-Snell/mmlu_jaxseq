@@ -1,10 +1,40 @@
 #!/bin/bash
+
+# 4/16/2023
+
+# nlp3 top left pane
+# echo "koala 1250"
+# python evaluate_eval_harness_jaxseq.py \
+#     --host http://127.0.0.1:8006/ \
+#     --k-shot 5 \
+#     --input-process koala \
+#     --bsize 4 
+# echo "koala 1250"
+
+# nlp3 bottom left pane
+# echo "koala 5000"
+# python evaluate_eval_harness_jaxseq.py \
+#     --host http://127.0.0.1:8007/ \
+#     --k-shot 5 \
+#     --input-process koala \
+#     --bsize 4 
+# echo "koala 5000"
+
+# nlp3 top right pane
+# echo "koala last"
+# python evaluate_eval_harness_jaxseq.py \
+#     --host http://127.0.0.1:8008/ \
+#     --k-shot 5 \
+#     --input-process koala \
+#     --bsize 4 
+# echo "koala last"
+
 # 4/13/2023
 
-# chargpt 0 shot
+# chatgpt 0 shot
 
 # nlp4 right pane
-python chatgpt_eval.py --name chatgpt_eval_zero_shot --k-shot 0 --data-dir /home/csnell/mmlu_easylm/data/ --save-dir /home/csnell/mmlu_easylm/outputs/
+# python chatgpt_eval.py --name chatgpt_eval_zero_shot --k-shot 0 --data-dir /home/csnell/mmlu_easylm/data/ --save-dir /home/csnell/mmlu_easylm/outputs/
 
 
 # 4/12/2023
