@@ -1,5 +1,33 @@
 #!/bin/bash
 
+# 4/23/3033
+
+# nlp4 window 15 bottom pane
+python evaluate_llama_jaxseq.py \
+    --name flan_llama_7B_80k_original_prompt \
+    --host http://127.0.0.1:8079/ \
+    --k-shot 5 \
+    --data-dir /home/csnell/mmlu_easylm/data/ \
+    --save-dir /home/csnell/mmlu_easylm/outputs/
+
+# 4/22/2023
+
+# nlp4 window 15 bottom pane
+# python evaluate_llama_jaxseq.py \
+#     --name flan_llama_7B_original_prompt \
+#     --host http://127.0.0.1:8079/ \
+#     --k-shot 5 \
+#     --data-dir /home/csnell/mmlu_easylm/data/ \
+#     --save-dir /home/csnell/mmlu_easylm/outputs/
+
+
+# nlp4 window 15 bottom pane
+# python evaluate_eval_harness_jaxseq.py \
+#     --host http://127.0.0.1:8079/ \
+#     --k-shot 5 \
+#     --input-process identity \
+#     --bsize 4
+
 # 4/16/2023
 
 # nlp3 top left pane
