@@ -62,7 +62,7 @@ class LMEvalHarnessInterface(LM):
                     break
             if not did_succeed:
                 raise Exception('Failed to get logprobs after {} retries'.format(self.n_retries))
-
+            
             is_greedy = [False]*len(response['data']) # is_greedy is not used in the multiple choice evaluation code.
             results.extend(list(zip(response['data'], is_greedy)))
         return results

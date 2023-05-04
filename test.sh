@@ -1,14 +1,40 @@
 #!/bin/bash
 
-# 4/23/3033
+# 5/4/2023
+
+# nlp1 top-left – gpt2-xl
+# python evaluate_eval_harness_jaxseq.py \
+#     --host http://127.0.0.1:8079/ \
+#     --k-shot 5 \
+#     --input-process koala \
+#     --bsize 4 \
+#     --max-input-length 512 \
+#     --max-output-length 512 \
+
+# nlp1 top-right pane – llama 7B
+# python evaluate_llama_jaxseq.py \
+#     --name llama_7B_original_prompt_5_shot \
+#     --host http://127.0.0.1:8089/ \
+#     --k-shot 5 \
+#     --data-dir /home/csnell/mmlu_jaxseq/data/ \
+#     --save-dir /home/csnell/mmlu_jaxseq/outputs/
+
+# nlp1 bottom-left pane – koala 7B 1 epoch last
+python evaluate_eval_harness_jaxseq.py \
+    --host http://127.0.0.1:8099/ \
+    --k-shot 5 \
+    --input-process koala \
+    --bsize 4
+
+# 4/23/2023
 
 # nlp4 window 15 bottom pane
-python evaluate_llama_jaxseq.py \
-    --name flan_llama_7B_80k_original_prompt \
-    --host http://127.0.0.1:8079/ \
-    --k-shot 5 \
-    --data-dir /home/csnell/mmlu_easylm/data/ \
-    --save-dir /home/csnell/mmlu_easylm/outputs/
+# python evaluate_llama_jaxseq.py \
+#     --name flan_llama_7B_80k_original_prompt \
+#     --host http://127.0.0.1:8079/ \
+#     --k-shot 5 \
+#     --data-dir /home/csnell/mmlu_easylm/data/ \
+#     --save-dir /home/csnell/mmlu_easylm/outputs/
 
 # 4/22/2023
 
