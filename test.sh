@@ -1,5 +1,14 @@
 #!/bin/bash
 
+# 5/8/2023
+
+# nlp4
+python evaluate_eval_harness_jaxseq_multiple_host.py \
+    --host http://34.148.106.55:8000/ http://34.74.15.70:8000/ http://35.237.51.173:8000/ http://34.73.22.103:8000/ \
+    --k-shot 5 \
+    --input-process koala \
+    --bsize 8
+
 # 5/6/2023
 
 # nlp1 top-left pane – gpt2-xl
@@ -25,7 +34,7 @@
 
 # 5/4/2023
 
-# nlp1 top-left – gpt2-xl
+# nlp1 top-left – koala gpt2-xl
 # python evaluate_eval_harness_jaxseq.py \
 #     --host http://127.0.0.1:8079/ \
 #     --k-shot 5 \
