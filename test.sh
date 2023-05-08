@@ -1,5 +1,28 @@
 #!/bin/bash
 
+# 5/6/2023
+
+# nlp1 top-left pane – gpt2-xl
+# python evaluate_eval_harness_jaxseq.py \
+#     --host http://127.0.0.1:8079/ \
+#     --k-shot 5 \
+#     --input-process identity \
+#     --bsize 4 \
+#     --max-input-length 512 \
+#     --max-output-length 512 \
+
+# 5/5/2023
+
+# nlp1 top-left pane – gpt2-xl
+# python evaluate_llama_jaxseq.py \
+#     --name gpt2_xl_original_prompt_5_shot \
+#     --host http://127.0.0.1:8079/ \
+#     --k-shot 5 \
+#     --data-dir /home/csnell/mmlu_jaxseq/data/ \
+#     --save-dir /home/csnell/mmlu_jaxseq/outputs/ \
+#     --max-input-length 512 \
+#     --max-output-length 512 \
+
 # 5/4/2023
 
 # nlp1 top-left – gpt2-xl
@@ -20,11 +43,13 @@
 #     --save-dir /home/csnell/mmlu_jaxseq/outputs/
 
 # nlp1 bottom-left pane – koala 7B 1 epoch last
-python evaluate_eval_harness_jaxseq.py \
-    --host http://127.0.0.1:8099/ \
-    --k-shot 5 \
-    --input-process koala \
-    --bsize 4
+# python evaluate_eval_harness_jaxseq.py \
+#     --host http://127.0.0.1:8099/ \
+#     --k-shot 5 \
+#     --input-process koala \
+#     --bsize 4
+
+
 
 # 4/23/2023
 
