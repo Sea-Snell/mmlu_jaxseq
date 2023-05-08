@@ -2,12 +2,19 @@
 
 # 5/8/2023
 
-# nlp4
-python evaluate_eval_harness_jaxseq_multiple_host.py \
-    --host http://34.148.106.55:8000/ http://34.74.15.70:8000/ http://35.237.51.173:8000/ http://34.73.22.103:8000/ \
+# rail-a100
+python evaluate_eval_harness_jaxseq.py \
+    --host http://127.0.0.1:8000/ \
     --k-shot 5 \
     --input-process koala \
-    --bsize 8
+    --bsize 512
+
+# nlp4
+# python evaluate_eval_harness_jaxseq_multiple_host.py \
+#     --host http://34.148.106.55:8000/ http://34.74.15.70:8000/ http://35.237.51.173:8000/ http://34.73.22.103:8000/ \
+#     --k-shot 5 \
+#     --input-process koala \
+#     --bsize 8
 
 # 5/6/2023
 

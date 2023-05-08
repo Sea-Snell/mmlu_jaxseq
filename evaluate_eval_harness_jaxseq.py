@@ -88,6 +88,7 @@ def main(
         model, tasks.get_task_dict(list(map(lambda x: f"hendrycksTest-{x}", SUBJECTS))), False, k_shot, None, 
     )
     pprint.pprint(results)
+    print(sum(map(lambda x: x['acc'], results['results'].values())) / len(results['results']))
 
 if __name__ == "__main__":
     tyro.cli(main)
