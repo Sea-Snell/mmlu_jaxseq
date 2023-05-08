@@ -2,14 +2,31 @@
 
 # 5/8/2023
 
-# rail-a100
-python evaluate_eval_harness_jaxseq.py \
-    --host http://127.0.0.1:8000/ \
-    --k-shot 5 \
-    --input-process koala \
-    --bsize 512
+# nlp4 pane 6 bottom – koala-13B koala step_1250 – served on charlie-pod2
+# python evaluate_eval_harness_jaxseq_multiple_host.py \
+#     --host http://34.148.106.55:8000/ http://34.74.15.70:8000/ http://35.237.51.173:8000/ http://34.73.22.103:8000/ \
+#     --k-shot 5 \
+#     --input-process koala \
+#     --bsize 32
 
-# nlp4
+# nlp4 pane 6 top – gpt2-xl koala last – served on charlie-pod
+# python evaluate_eval_harness_jaxseq_multiple_host.py \
+#     --host http://35.185.31.188:8000/ http://34.74.95.238:8000/ http://34.73.119.72:8000/ http://104.196.32.17:8000/ \
+#     --k-shot 5 \
+#     --input-process koala \
+#     --bsize 128 \
+#     --max-input-length 512 \
+#     --max-output-length 512
+
+
+# rail-a100 – 13B koala last – served on rail-a100
+# python evaluate_eval_harness_jaxseq.py \
+#     --host http://127.0.0.1:8000/ \
+#     --k-shot 5 \
+#     --input-process koala \
+#     --bsize 512
+
+# nlp4 pane 6 – 7B koala last – served on charlie-pod2
 # python evaluate_eval_harness_jaxseq_multiple_host.py \
 #     --host http://34.148.106.55:8000/ http://34.74.15.70:8000/ http://35.237.51.173:8000/ http://34.73.22.103:8000/ \
 #     --k-shot 5 \
