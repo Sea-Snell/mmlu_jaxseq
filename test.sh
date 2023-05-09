@@ -2,6 +2,13 @@
 
 # 5/8/2023
 
+# rail-a100 – 13B koala step_5000 – served on rail-a100
+# python evaluate_eval_harness_jaxseq.py \
+#     --host http://127.0.0.1:8000/ \
+#     --k-shot 5 \
+#     --input-process koala \
+#     --bsize 512
+
 # nlp4 pane 6 bottom – koala-13B koala step_1250 – served on charlie-pod2
 # python evaluate_eval_harness_jaxseq_multiple_host.py \
 #     --host http://34.148.106.55:8000/ http://34.74.15.70:8000/ http://35.237.51.173:8000/ http://34.73.22.103:8000/ \
