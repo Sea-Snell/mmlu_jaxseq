@@ -2,12 +2,26 @@
 
 # 5/12/2023
 
-# rail-a100 – 13B koala last – served on rail-a100
+# rail-a100 – 13B koala step_5000 – served on rail-a100
 python evaluate_eval_harness_jaxseq.py \
     --host http://127.0.0.1:8000/ \
     --k-shot 5 \
     --input-process koala \
     --bsize 512
+
+# rail-a100 – 13B koala step_1250 – served on rail-a100
+# python evaluate_eval_harness_jaxseq.py \
+#     --host http://127.0.0.1:8000/ \
+#     --k-shot 5 \
+#     --input-process koala \
+#     --bsize 512
+
+# rail-a100 – 13B koala last – served on rail-a100
+# python evaluate_eval_harness_jaxseq.py \
+#     --host http://127.0.0.1:8000/ \
+#     --k-shot 5 \
+#     --input-process koala \
+#     --bsize 512
 
 # nlp4 pane 8 top – gpt2-xl koala last – served on charlie-pod
 # python evaluate_eval_harness_jaxseq_multiple_host.py \
