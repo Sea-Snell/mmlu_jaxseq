@@ -20,22 +20,19 @@ def parse_response(response: str) -> str:
 def get_answer(prompt: str) -> str:
     while True:
         try:
-            response_obj = openai.ChatCompletion.create(
-                # model="gpt-3.5-turbo", 
-                model="gpt-4-1106-preview",
-                messages=[
-                    {"role": "system", "content": "You are a helpful assistant. You only respond with a single letter (A, B, C, D), answering the given multiple choice questions."}, 
-                    {"role": "user", "content": prompt}, 
-                ],
-                temperature=0.0,
+            response_obj = openai.Completion.create(
+                model="text-davinci-003",
+                prompt=prompt,
+                temperature=0.0, 
             )
             break
         except Exception as e:
             print('waiting ...')
             time.sleep(1)
             print('retrying ...')
+            print(e)
             continue
-    raw_response = response_obj["choices"][0]['message']['content']
+    raw_response = response_obj["choices"][0]['text']
     answer = parse_response(raw_response)
     if answer not in choices:
         print("Invalid response: {}".format(raw_response))

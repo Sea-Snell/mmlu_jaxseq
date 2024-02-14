@@ -5,8 +5,10 @@ import tyro
 from lm_eval import evaluator, tasks
 from lm_eval.base import LM
 from lm_eval.tasks.hendrycks_test import SUBJECTS
-from typing import List, Callable
+from typing import List, Callable, Union
 from tqdm.auto import tqdm
+import threading
+from urllib.parse import urljoin
 
 def identity_fn(x: str) -> str:
     return x
@@ -22,20 +24,32 @@ input_proc_fs = dict(
 class LMEvalHarnessInterface(LM):
     def __init__(
         self, 
-        host: str, 
+        hosts: List[str], 
         bsize: int, 
         input_process: Callable[[str], str], 
         max_input_length: int=1024, 
         max_output_length: int=1024, 
         n_retries: int=3, 
     ):
-        self.host = host
+        self.hosts = hosts
         self.bsize = bsize
         self.input_process = input_process
         self.max_input_length = max_input_length
         self.max_output_length = max_output_length
         self.n_retries = n_retries
         assert self.n_retries > 0, 'n_retries must be positive'
+    
+    def request(self, path: str, **kwargs):
+        thread_results = {}
+        def _request(host: str):
+            nonlocal thread_results
+            thread_results[host] = requests.post(urljoin(host, path), **kwargs)
+        threads = [threading.Thread(target=_request, args=(host,)) for host in self.hosts]
+        for thread in threads:
+            thread.start()
+        for thread in threads:
+            thread.join()
+        return thread_results[self.hosts[0]]
 
     def loglikelihood(self, inputs):
         in_strs, out_strs = zip(*inputs)
@@ -48,8 +62,8 @@ class LMEvalHarnessInterface(LM):
 
             did_succeed = False
             for _ in range(self.n_retries):
-                response = requests.post(
-                    urllib.parse.urljoin(self.host, 'log_probs'), 
+                response = self.request(
+                    'log_probs', 
                     json={
                         'in_strs': in_strs_batch, 
                         'out_strs': out_strs_batch, 
@@ -75,7 +89,7 @@ class LMEvalHarnessInterface(LM):
 
 
 def main(
-    host: str, 
+    host: Union[str, List[str]], 
     k_shot: int, 
     input_process: str, 
     bsize: int=8, 
@@ -83,6 +97,8 @@ def main(
     max_input_length: int=1024, 
     max_output_length: int=1024, 
 ):
+    if isinstance(host, str):
+        host = [host]
     model = LMEvalHarnessInterface(host, bsize, input_proc_fs[input_process], max_input_length, max_output_length, n_retries)
     results = evaluator.evaluate(
         model, tasks.get_task_dict(list(map(lambda x: f"hendrycksTest-{x}", SUBJECTS))), False, k_shot, None, 
