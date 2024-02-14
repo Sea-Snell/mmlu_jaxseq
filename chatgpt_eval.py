@@ -21,12 +21,13 @@ def get_answer(prompt: str) -> str:
     while True:
         try:
             response_obj = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo", 
+                # model="gpt-3.5-turbo", 
+                model="gpt-4-1106-preview",
                 messages=[
-                    {"role": "system", "content": "You are a helpful assistant."}, 
+                    {"role": "system", "content": "You are a helpful assistant. You only respond with a single letter (A, B, C, D), answering the given multiple choice questions."}, 
                     {"role": "user", "content": prompt}, 
-                ], 
-                temperature=0.0, 
+                ],
+                temperature=0.0,
             )
             break
         except Exception as e:

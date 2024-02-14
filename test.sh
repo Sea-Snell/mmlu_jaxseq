@@ -1,13 +1,19 @@
 #!/bin/bash
 
+python chatgpt_eval.py \
+    --name gpt4_eval_5_shot \
+    --k-shot 5 \
+    --data-dir /home/csnell/mmlu_easylm/data/ \
+    --save-dir /home/csnell/mmlu_easylm/outputs/
+
 # 5/12/2023
 
 # rail-a100 – 13B koala step_5000 – served on rail-a100
-python evaluate_eval_harness_jaxseq.py \
-    --host http://127.0.0.1:8000/ \
-    --k-shot 5 \
-    --input-process koala \
-    --bsize 512
+# python evaluate_eval_harness_jaxseq.py \
+#     --host http://127.0.0.1:8000/ \
+#     --k-shot 5 \
+#     --input-process koala \
+#     --bsize 512
 
 # rail-a100 – 13B koala step_1250 – served on rail-a100
 # python evaluate_eval_harness_jaxseq.py \
